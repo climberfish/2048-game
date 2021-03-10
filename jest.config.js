@@ -1,7 +1,7 @@
 module.exports = {
   moduleDirectories: ['node_modules', 'src'],
   moduleFileExtensions: ['js', 'json', 'ts'],
-  testMatch: ["**/tests/?(*.)+(spec|test).[jt]s?(x)"],
+  testMatch: ["<rootDir>/tests/?(*.)+(spec|test).[jt]s?(x)"],
   transform: { '^.+\\.(t|j)s$': 'ts-jest' },
   testEnvironment: 'node',
   moduleNameMapper: {
