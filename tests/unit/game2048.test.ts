@@ -1,4 +1,4 @@
-import Game2048, { Board, Movement, PieceGenerator } from 'src/game2048';
+import Game2048, { Board, Movement, PieceGenerator } from '@/application/game2048';
 import 'jest-extended';
 
 describe('Game2048 tests', () => {
@@ -206,10 +206,8 @@ describe('Game2048 tests', () => {
       ____
       ___2
     `, pieceGenerator(0, 3));
-    const oldBoard = jogo.board();
+    const oldBoard = JSON.parse(JSON.stringify(jogo.board()));
     jogo.moveTo(Movement.RIGHT);
     expect(jogo.board()).toEqual(oldBoard);
   });
 });
-
-// Se a jogada não for possível, não gera 

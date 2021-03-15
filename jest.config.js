@@ -1,11 +1,11 @@
 module.exports = {
-  moduleDirectories: ['node_modules', 'src'],
-  moduleFileExtensions: ['js', 'json', 'ts'],
-  testMatch: ["<rootDir>/tests/?(*.)+(spec|test).[jt]s?(x)"],
-  transform: { '^.+\\.(t|j)s$': 'ts-jest' },
-  testEnvironment: 'node',
+  preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
+  testMatch: ["<rootDir>/tests/**/?(*.)+(spec|test).[jt]s?(x)"],
+  transform: {
+    '^.+\\.vue$': 'vue-jest',
+  },
   moduleNameMapper: {
-    'src/(.*)': '<rootDir>/src/$1',
-    'tests/(.*)': '<rootDir>/../tests/$1',
+    '@/(.*)': '<rootDir>/src/$1',
+    'tests/(.*)': '<rootDir>/tests/$1',
   },
 };
