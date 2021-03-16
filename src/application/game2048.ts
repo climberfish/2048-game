@@ -21,11 +21,11 @@ export type PieceGenerator = (Board: Board) => GeneratedPiece;
 
 const randomGenerator: PieceGenerator = (board: Board) => {
   const value = Math.random() > 0.9 ? 4 : 2;
-  const defaultPiece: GeneratedPiece = { row: 0, col: 0, value }
+  const defaultPiece: GeneratedPiece = { row: 0, col: 0, value };
 
   const emptyCells = [];
-  for (const row of [0, 1, 2, 3]) {
-    for (const col of [0, 1, 2, 3]) {
+  for (let row = 0; row < 4; row++) {
+    for (let col = 0; col < 4; col++) {
       if (!board[row][col]) emptyCells.push([row, col]);
     }
   }
@@ -34,21 +34,28 @@ const randomGenerator: PieceGenerator = (board: Board) => {
   const index = Math.floor(Math.random() * emptyCells.length);
   const [row, col] = emptyCells[index];
   return { row, col, value };
-}
+};
 
 export enum GameStatus { WON, PLAYING, LOST }
 
 export default class Game2048 {
   static fromString(boardAsText: string, pieceGenerator?: PieceGenerator): Game2048 {
-    const rows = boardAsText.trim().split('\n').map(row => row.trim().split(''));
-    const board: Board = rows.map(row => 
-      row.map((char: string) => (char === '_') ? null : Number(char))
-    ) as Board;
+    const rows = boardAsText.trim().split('\n').map((row) => row.trim().split(''));
+    const board: Board = rows.map((row) => row.map((char: string) => ((char === '_') ? null : Number(char)))) as Board;
     return new Game2048(board, pieceGenerator);
   }
 
+  static randomGame(pieceGenerator?: PieceGenerator): Game2048 {
+    const board = Array(4).fill(null).map(() => Array(4).fill(null));
+    const game = new Game2048(board as Board, pieceGenerator);
+    game.spawnPiece();
+    return game;
+  }
+
   private _board: Board;
+
   private status: GameStatus = GameStatus.PLAYING;
+
   private pieceGenerator: PieceGenerator;
 
   constructor(board: Board, pieceGenerator: PieceGenerator = randomGenerator) {
@@ -75,46 +82,47 @@ export default class Game2048 {
     if (move === Movement.UP) this.moveVertically(Movement.UP);
 
     if (JSON.stringify(oldBoard) !== JSON.stringify(this._board)) {
-      this.spawnPiece()
+      this.spawnPiece();
     }
 
     this.testIfIsLost();
   }
 
   moveHorizontally(move: Movement) {
-    for (const row of [0, 1, 2, 3]) {
-      let newRow = this._board[row].filter(cell => cell !== null);
+    for (let row = 0; row < 4; row++) {
+      let newRow = this._board[row].filter((cell) => cell !== null);
 
       const step = move === Movement.RIGHT ? -1 : 1;
       const cols = move === Movement.RIGHT ? [3, 2, 1] : [0, 1, 2];
-      const fill = (row: Cell[]) => move === Movement.RIGHT ? row.unshift(null) : row.push(null);
+      const fill = (rowToFill: Cell[]) => (move === Movement.RIGHT
+        ? rowToFill.unshift(null)
+        : rowToFill.push(null));
 
-      for (const col of cols) {
+      cols.forEach((col) => {
         if (newRow[col] && newRow[col] === newRow[col + step]) {
           newRow[col] = (newRow[col] as number) * 2;
           if (newRow[col] === 2048) this.status = GameStatus.WON;
           newRow[col + step] = null;
-          newRow = newRow.filter(cell => cell !== null);
+          newRow = newRow.filter((cell) => cell !== null);
         }
-      }
+      });
 
       while (newRow.length < 4) fill(newRow);
       this._board[row] = newRow as BoardRow;
     }
-
   }
 
   moveVertically(move: Movement) {
     const transposedMove = move !== Movement.DOWN ? Movement.LEFT : Movement.RIGHT;
     this.transpose();
-    this.moveHorizontally(transposedMove)
+    this.moveHorizontally(transposedMove);
     this.transpose();
   }
 
   transpose(): void {
     const transposed = Array(4).fill(null).map(() => Array(4)) as Board;
-    for (const row of [0, 1, 2, 3]) {
-      for (const col of [0, 1, 2, 3]) {
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 4; col++) {
         transposed[col][row] = this._board[row][col];
       }
     }
@@ -135,12 +143,13 @@ export default class Game2048 {
   }
 
   testIfIsLost(): void {
-    for (const row of [0, 1, 2, 3]) {
-      for (const col of [0, 1, 2, 3]) {
+    for (let row = 0; row < 4; row++) {
+      for (let col = 0; col < 4; col++) {
         if (!this._board[row][col]) return;
 
-        for (const coords of [[-1, 0], [1, 0], [0, 1], [0, -1]]) {
-          const [dRow, dCol] = coords;
+        const coordsToCheck = [[-1, 0], [1, 0], [0, 1], [0, -1]];
+        for (let i = 0; i < coordsToCheck.length; i++) {
+          const [dRow, dCol] = coordsToCheck[i];
           const nRow = row + dRow;
           const nCol = col + dCol;
           if (nRow < 0 || nCol < 0) continue;

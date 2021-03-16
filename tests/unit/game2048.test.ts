@@ -1,12 +1,12 @@
-import Game2048, { Board, Movement, PieceGenerator } from '@/application/game2048';
+import Game2048, { Movement, PieceGenerator } from '@/application/game2048';
 import 'jest-extended';
 
 describe('Game2048 tests', () => {
   let pieceGenerator: (row: number, col: number) => PieceGenerator;
 
   beforeAll(() => {
-    pieceGenerator = (row, col) => (board: Board) => ({ value: 2, row, col });
-  })
+    pieceGenerator = (row, col) => () => ({ value: 2, row, col });
+  });
 
   test('transpõe board', () => {
     const jogo: Game2048 = Game2048.fromString(`
@@ -68,9 +68,9 @@ describe('Game2048 tests', () => {
       __48
       ___8
       ___4
-    `)
+    `);
     jogo.moveTo(Movement.RIGHT);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
 
   test('move blocos no movimento à esquerda', () => {
@@ -87,9 +87,9 @@ describe('Game2048 tests', () => {
       8___
     `);
     jogo.moveTo(Movement.LEFT);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
-  
+
   test('mescla blocos no movimento à esquerda', () => {
     const jogo: Game2048 = Game2048.fromString(`
       4444
@@ -102,9 +102,9 @@ describe('Game2048 tests', () => {
       84__
       8___
       4___
-    `)
+    `);
     jogo.moveTo(Movement.LEFT);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
 
   test('move blocos no movimento para baixo', () => {
@@ -121,7 +121,7 @@ describe('Game2048 tests', () => {
       8888
     `);
     jogo.moveTo(Movement.DOWN);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
 
   test('mescla blocos no movimento para baixo', () => {
@@ -136,9 +136,9 @@ describe('Game2048 tests', () => {
       ____
       84__
       8884
-    `)
+    `);
     jogo.moveTo(Movement.DOWN);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
 
   test('move blocos no movimento para cima', () => {
@@ -155,7 +155,7 @@ describe('Game2048 tests', () => {
       ___2
     `);
     jogo.moveTo(Movement.UP);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
 
   test('mescla blocos no movimento para cima', () => {
@@ -170,9 +170,9 @@ describe('Game2048 tests', () => {
       84__
       ____
       ___2
-    `)
+    `);
     jogo.moveTo(Movement.UP);
-    expect(jogo.board()).toEqual(esperado.board())
+    expect(jogo.board()).toEqual(esperado.board());
   });
 
   test('ganha o jogo ao formar 2048', () => {
